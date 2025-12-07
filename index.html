@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>35 Points: Catching the Economy 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #38bdf8;
+            --accent-hot: #f43f5e;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --glow-color: rgba(56, 189, 248, 0.6);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin: 0;
+            background: linear-gradient(to right, #38bdf8, #f43f5e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+            font-weight: 800;
+            text-shadow: 0 0 30px rgba(56, 189, 248, 0.2);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .grid-container.has-focus .card:not(.focused) {
+            opacity: 0.3;
+            transform: scale(0.95);
+            filter: blur(2px);
+            pointer-events: none;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden; /* Important for containing the zoomed image */
+            border: 1px solid #334155;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            min-height: 320px;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- BACKGROUND IMAGE & ANIMATION --- */
+        .card-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0; /* Hidden by default */
+            z-index: 0; /* Behind text */
+            transition: opacity 0.8s ease; /* Fade in smoothly */
+            filter: grayscale(80%) brightness(0.6); /* Dim and desaturate */
+        }
+
+        /* Keyframes for the Slow Zoom */
+        @keyframes zoomSlow {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.25); }
+        }
+
+        /* Trigger Animation on Focus */
+        .card.focused .card-bg {
+            opacity: 0.25; /* Visible but faint */
+            animation: zoomSlow 20s linear infinite alternate; /* Infinite slow zoom */
+        }
+        /* ------------------------------------ */
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--glow-color);
+            border-color: var(--accent-color);
+            z-index: 10;
+        }
+
+        .card:hover .card-icon i {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .card.focused {
+            transform: scale(1.1) translateY(-10px);
+            background-color: #1e293b; /* Keep dark to show bg image better */
+            border-color: var(--accent-color);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 40px var(--accent-color);
+            z-index: 100;
+        }
+        
+        .card.focused .card-title {
+            color: var(--accent-color);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8); /* readable on image */
+        }
+
+        .card-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 5rem;
+            color: rgba(255, 255, 255, 0.05);
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            line-height: 1;
+            z-index: 1; /* Above bg */
+            transition: all 0.3s ease;
+        }
+        
+        .card.focused .card-number {
+            color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.2);
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2; /* Above bg and number */
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            width: 60px;
+            height: 60px;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px); /* Nice effect over image */
+        }
+
+        .urgent .card-icon {
+            color: var(--accent-hot);
+            background: rgba(244, 63, 94, 0.1);
+        }
+        
+        .card.focused .card-icon {
+            background: var(--accent-color);
+            color: #fff;
+            transform: scale(1.1);
+        }
+        
+        .card.focused.urgent .card-icon {
+            background: var(--accent-hot);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            color: #fff;
+            transition: color 0.3s ease;
+        }
+
+        .card-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            flex-grow: 1;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8); /* readability */
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            backdrop-filter: blur(4px);
+        }
+
+        .tag-marketing { background: rgba(59, 130, 246, 0.3); color: #93c5fd; }
+        .tag-economy { background: rgba(239, 68, 68, 0.3); color: #fca5a5; }
+        .tag-opportunity { background: rgba(34, 197, 94, 0.3); color: #86efac; }
+        .tag-mindset { background: rgba(234, 179, 8, 0.3); color: #fde047; }
+        .tag-skill { background: rgba(168, 85, 247, 0.3); color: #d8b4fe; }
+        
+        .hint-text {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            color: #ccc;
+            pointer-events: none;
+            z-index: 1000;
+            border: 1px solid #333;
+            animation: fadeInOut 4s infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .grid-container { grid-template-columns: 1fr; }
+            .card.focused { transform: scale(1.05); } 
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="subtitle">2026 Economic Forecast</div>
+        <h1>35 กฎเหล็ก<br>ฝ่าวิกฤตเศรษฐกิจไทย</h1>
+        <p style="color: #94a3b8; margin-top: 20px;">สรุปครบ 35 ข้อ | จิ้มที่การ์ดเพื่อดูภาพ Infographic</p>
+    </header>
+
+    <div class="hint-text">
+        <i class="fa-solid fa-hand-pointer"></i> จิ้มที่การ์ดเพื่อขยายและดูภาพ
+    </div>
+
+    <div class="grid-container" id="gridContainer">
+
+        <!-- 1. Fan vs Follower -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/crowd,concert?lock=1');"></div>
+            <div class="card-number">01</div>
+            <div class="card-content">
+                <span class="tag tag-marketing">Marketing</span>
+                <div class="card-icon"><i class="fa-solid fa-users"></i></div>
+                <div class="card-title">สร้าง Fan สำคัญกว่า Follower</div>
+                <div class="card-text">ยุคนี้ยอด Follower ไม่การันตีการมองเห็น (Reach) แต่ "แฟนตัวจริง" จะช่วยเชียร์ ปกป้อง และบอกต่อ ซึ่งคือพลัง Word of Mouth ที่ทรงพลังที่สุด</div>
+            </div>
+        </div>
+
+        <!-- 2. Brand Definition -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/brain,memory?lock=2');"></div>
+            <div class="card-number">02</div>
+            <div class="card-content">
+                <span class="tag tag-marketing">Branding</span>
+                <div class="card-icon"><i class="fa-solid fa-heart"></i></div>
+                <div class="card-title">แบรนด์ = ความทรงจำฝังใจ</div>
+                <div class="card-text">นิยามจากคุณบัณฑูร: แบรนด์คือการสร้างประสบการณ์ที่ลูกค้า "จำฝังใจ" และรู้สึกดีเหนือกว่าความคาดหมายเสมอ</div>
+            </div>
+        </div>
+
+        <!-- 3. River Change -->
+        <div class="card urgent" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/river,water?lock=3');"></div>
+            <div class="card-number">03</div>
+            <div class="card-content">
+                <span class="tag tag-economy">Economy</span>
+                <div class="card-icon"><i class="fa-solid fa-water"></i></div>
+                <div class="card-title">เศรษฐกิจไม่ใช่แค่น้ำขึ้นน้ำลง</div>
+                <div class="card-text">นี่คือ "แม่น้ำเปลี่ยนทิศ" มันจะไม่กลับมาเหมือนเดิม หากใครยังรออยู่ที่เดิม เท่ากับอยู่บนพื้นที่ที่ไร้มูลค่าแล้ว</div>
+            </div>
+        </div>
+
+        <!-- 4. Super Aging -->
+        <div class="card urgent" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/elderly,park?lock=4');"></div>
+            <div class="card-number">04</div>
+            <div class="card-content">
+                <span class="tag tag-economy">Demographics</span>
+                <div class="card-icon"><i class="fa-solid fa-person-cane"></i></div>
+                <div class="card-title">เข้าสู่ Super Aging Society</div>
+                <div class="card-text">ปี 2030 ไทยจะมีผู้สูงอายุ (60+) เกิน 30% คนวัยทำงานต้องแบกรับภาระทางเศรษฐกิจหนักอึ้ง</div>
+            </div>
+        </div>
+
+        <!-- 5. Low Birth Rate -->
+        <div class="card urgent" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/baby,cute?lock=5');"></div>
+            <div class="card-number">05</div>
+            <div class="card-content">
+                <span class="tag tag-economy">Demographics</span>
+                <div class="card-icon"><i class="fa-solid fa-baby-carriage"></i></div>
+                <div class="card-title">วิกฤตเด็กเกิดใหม่</div>
+                <div class="card-text">อัตราการเกิดเหลือเพียง 1.2 คน/ครัวเรือน (ควรเป็น 2.1) ประชากรจะหดตัวเหลือ 50 ล้านคน ฉุด GDP ให้เล็กลง</div>
+            </div>
+        </div>
+
+        <!-- 6. Platform Dominance -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/ecommerce,shopping?lock=6');"></div>
+            <div class="card-number">06</div>
+            <div class="card-content">
+                <span class="tag tag-economy">Tech</span>
+                <div class="card-icon"><i class="fa-solid fa-globe"></i></div>
+                <div class="card-title">แพลตฟอร์มต่างชาติกินรวบ</div>
+                <div class="card-text">Shopee, Lazada, TikTok เข้ามาคุมช่องทางซื้อขายเบ็ดเสร็จ เราควบคุมราคาและกฎกติกาไม่ได้</div>
+            </div>
+        </div>
+
+        <!-- 7. Capital Market -->
+        <div class="card urgent" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/stockmarket,chart?lock=7');"></div>
+            <div class="card-number">07</div>
+            <div class="card-content">
+                <span class="tag tag-economy">Finance</span>
+                <div class="card-icon"><i class="fa-solid fa-arrow-trend-down"></i></div>
+                <div class="card-title">ตลาดทุนไทยแห้งเหือด</div>
+                <div class="card-text">เงินไหลออกไปตลาดต่างประเทศ (เช่นผ่าน Finnomena) หุ้นไทย PE ต่ำ ระดมทุนยาก Market Cap ลดลง</div>
+            </div>
+        </div>
+
+        <!-- 8. Olympic Competition -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/stadium,sport?lock=8');"></div>
+            <div class="card-number">08</div>
+            <div class="card-content">
+                <span class="tag tag-economy">Competition</span>
+                <div class="card-icon"><i class="fa-solid fa-medal"></i></div>
+                <div class="card-title">การแข่งขันระดับ "โอลิมปิก"</div>
+                <div class="card-text">จากเดิมแข่งแค่ระดับซีเกมส์ (ในประเทศ) ตอนนี้ต้องแข่งกับสินค้าจีนราคาถูกและมาตรฐานบริการระดับยุโรป</div>
+            </div>
+        </div>
+
+        <!-- 9. Global Standards -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/technology,computer?lock=9');"></div>
+            <div class="card-number">09</div>
+            <div class="card-content">
+                <span class="tag tag-mindset">Behavior</span>
+                <div class="card-icon"><i class="fa-brands fa-google"></i></div>
+                <div class="card-title">มาตรฐานความคาดหวังสูงลิ่ว</div>
+                <div class="card-text">เราชินกับ Google/Facebook ที่ไม่เคยล่ม ทำให้เราเผลอเอามาตรฐานระดับโลกมาตัดสินธุรกิจไทย</div>
+            </div>
+        </div>
+
+        <!-- 10. Economic Sentiment -->
+        <div class="card urgent" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/storm,rain?lock=10');"></div>
+            <div class="card-number">10</div>
+            <div class="card-content">
+                <span class="tag tag-economy">Outlook</span>
+                <div class="card-icon"><i class="fa-solid fa-cloud-rain"></i></div>
+                <div class="card-title">K-Curve ขาบนกำลังร่วง</div>
+                <div class="card-text">กำลังซื้อระดับบนเริ่มหดตัว ปีหน้าและอีก 3 ปีข้างหน้าอาจแย่กว่านี้ Sentiment โดยรวมไม่สู้ดี</div>
+            </div>
+        </div>
+
+        <!-- 11. Weak Engines -->
+        <div class="card urgent" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/engine,mechanic?lock=11');"></div>
+            <div class="card-number">11</div>
+            <div class="card-content">
+                <span class="tag tag-economy">Economy</span>
+                <div class="card-icon"><i class="fa-solid fa-plane-slash"></i></div>
+                <div class="card-title">เครื่องยนต์เศรษฐกิจดับ</div>
+                <div class="card-text">ท่องเที่ยวไม่ฟื้นเต็มที่ (จีนหาย) ส่งออกเจอค่าเงินบาทแข็งและปัจจัยภายนอก (ทรัมป์)</div>
+            </div>
+        </div>
+
+        <!-- 12. Surviving Sectors -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/makeup,beauty?lock=12');"></div>
+            <div class="card-number">12</div>
+            <div class="card-content">
+                <span class="tag tag-opportunity">Business</span>
+                <div class="card-icon"><i class="fa-solid fa-gem"></i></div>
+                <div class="card-title">ธุรกิจ Thai Beauty ยังรุ่ง</div>
+                <div class="card-text">ความงามไทยเติบโตดี คนไทยซื้อเองและส่งออกได้ เพราะเชื่อมั่นในคุณภาพ</div>
+            </div>
+        </div>
+
+        <!-- 13. Debt Economy -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/motorcycle,road?lock=13');"></div>
+            <div class="card-number">13</div>
+            <div class="card-content">
+                <span class="tag tag-economy">Finance</span>
+                <div class="card-icon"><i class="fa-solid fa-motorcycle"></i></div>
+                <div class="card-title">ซื้อมือถือ-มอไซค์ ยังไปได้</div>
+                <div class="card-text">เติบโตด้วยระบบสินเชื่อ "ซื้อก่อนผ่อนทีหลัง" แบงก์ยังปล่อยกู้ง่ายกว่ารถยนต์ EV แต่แลกมาด้วยหนี้ครัวเรือน</div>
+            </div>
+        </div>
+
+        <!-- 14. Quick Big Win -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/spa,massage?lock=14');"></div>
+            <div class="card-number">14</div>
+            <div class="card-content">
+                <span class="tag tag-opportunity">Opportunity</span>
+                <div class="card-icon"><i class="fa-solid fa-spa"></i></div>
+                <div class="card-title">Wellness คือโอกาสทอง</div>
+                <div class="card-text">Quick Big Win ของไทย ประกอบด้วย 3 เสาหลัก: Physical, Mental, และ Spiritual</div>
+            </div>
+        </div>
+
+        <!-- 15. Thainess Advantage -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/temple,thai?lock=15');"></div>
+            <div class="card-number">15</div>
+            <div class="card-content">
+                <span class="tag tag-opportunity">Soft Power</span>
+                <div class="card-icon"><i class="fa-solid fa-hands-praying"></i></div>
+                <div class="card-title">แต้มต่อคือ "ความเป็นไทย"</div>
+                <div class="card-text">ลูกค้าต่างชาติ (เช่น ชีวาสม) ติดใจจิตวิญญาณการให้บริการของคนไทย ซึ่งหาไม่ได้จากที่อื่นในโลก</div>
+            </div>
+        </div>
+
+        <!-- 16. Data Center Hub -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/server,datacenter?lock=16');"></div>
+            <div class="card-number">16</div>
+            <div class="card-content">
+                <span class="tag tag-opportunity">Tech</span>
+                <div class="card-icon"><i class="fa-solid fa-server"></i></div>
+                <div class="card-title">ฮับ Data Center แห่งภูมิภาค</div>
+                <div class="card-text">ไทยมีเสน่ห์ดึงดูดเพราะค่าไฟถูกกว่าสิงคโปร์ มี Green Energy และเสถียรกว่าเวียดนาม</div>
+            </div>
+        </div>
+
+        <!-- 17. Professional Trap -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/business,suit?lock=17');"></div>
+            <div class="card-number">17</div>
+            <div class="card-content">
+                <span class="tag tag-mindset">Management</span>
+                <div class="card-icon"><i class="fa-solid fa-user-tie"></i></div>
+                <div class="card-title">กับดัก "มืออาชีพ"</div>
+                <div class="card-text">มืออาชีพมักเคลื่อนไหวช้า เพราะติดกับดักเหตุผล ตัวเลข IRR และการวิเคราะห์ SWOT จนไม่กล้าเสี่ยง</div>
+            </div>
+        </div>
+
+        <!-- 18. Entrepreneur Spirit -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/fire,flame?lock=18');"></div>
+            <div class="card-number">18</div>
+            <div class="card-content">
+                <span class="tag tag-mindset">Management</span>
+                <div class="card-icon"><i class="fa-solid fa-fire"></i></div>
+                <div class="card-title">พลัง "เถ้าแก่" (Gut Feeling)</div>
+                <div class="card-text">เถ้าแก่ใช้สัญชาตญาณตัดสินใจได้ทันที ทำให้ก้าวข้ามอุปสรรคและสร้างความแตกต่างที่มืออาชีพไม่กล้าทำ</div>
+            </div>
+        </div>
+
+        <!-- 19. Case Study: Ichitan -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/factory,industry?lock=19');"></div>
+            <div class="card-number">19</div>
+            <div class="card-content">
+                <span class="tag tag-mindset">Case Study</span>
+                <div class="card-icon"><i class="fa-solid fa-bottle-water"></i></div>
+                <div class="card-title">บทเรียนคุณตัน ภาสกรนที</div>
+                <div class="card-text">กล้าสร้างโรงงานใหญ่ทั้งที่ CFO ค้าน ผลลัพธ์คือต้นทุนต่อหน่วยถูกที่สุด นี่คือวิสัยทัศน์แบบเถ้าแก่</div>
+            </div>
+        </div>
+
+        <!-- 20. Intrapreneur -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/plant,seedling?lock=20');"></div>
+            <div class="card-number">20</div>
+            <div class="card-content">
+                <span class="tag tag-mindset">Culture</span>
+                <div class="card-icon"><i class="fa-solid fa-seedling"></i></div>
+                <div class="card-title">สร้าง "เถ้าแก่น้อย" ในองค์กร</div>
+                <div class="card-text">องค์กรใหญ่ต้องสร้างวัฒนธรรมให้พนักงานกล้าคิดกล้าทำเหมือนเจ้าของ (เช่น CP Leadership Institute)</div>
+            </div>
+        </div>
+
+        <!-- 21. Owner Premium -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/money,investment?lock=21');"></div>
+            <div class="card-number">21</div>
+            <div class="card-content">
+                <span class="tag tag-economy">Investing</span>
+                <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <div class="card-title">นักลงทุนชอบเจ้าของบริหาร</div>
+                <div class="card-text">ตลาดให้ Premium กับบริษัทที่เจ้าของบริหารเอง เพราะทุ่มเท 24 ชม. และมีเป้าหมายเดียวกับผู้ถือหุ้น</div>
+            </div>
+        </div>
+
+        <!-- 22. Age 45+ Tip 1 -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/volunteer,helping?lock=22');"></div>
+            <div class="card-number">22</div>
+            <div class="card-content">
+                <span class="tag tag-skill">Survival 45+</span>
+                <div class="card-icon"><i class="fa-solid fa-hand-holding-heart"></i></div>
+                <div class="card-title">อาสาทำงานที่คนอื่นไม่ทำ</div>
+                <div class="card-text">งานยาก งานจุกจิก จะทำให้เรากลายเป็นคนสำคัญที่องค์กรขาดไม่ได้ (Indispensable)</div>
+            </div>
+        </div>
+
+        <!-- 23. Age 45+ Tip 2-3 -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/trophy,winner?lock=23');"></div>
+            <div class="card-number">23</div>
+            <div class="card-content">
+                <span class="tag tag-skill">Survival 45+</span>
+                <div class="card-icon"><i class="fa-solid fa-star"></i></div>
+                <div class="card-title">ทำเกินความคาดหวังจนเป็นนิสัย</div>
+                <div class="card-text">ต้องทำให้ "สำเร็จ" (Success) ไม่ใช่แค่ทำให้ "เสร็จ" (Finish) ตามหน้าที่</div>
+            </div>
+        </div>
+
+        <!-- 24. Age 45+ Tip 4-5 -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/assistant,support?lock=24');"></div>
+            <div class="card-number">24</div>
+            <div class="card-content">
+                <span class="tag tag-skill">Survival 45+</span>
+                <div class="card-icon"><i class="fa-solid fa-wheelchair"></i></div>
+                <div class="card-title">ทำให้เจ้านาย "เป็นง่อย"</div>
+                <div class="card-text">รู้ใจและทำงานแทนเจ้านายได้ทุกเรื่องจนเขาขาดเราไม่ได้ และต้องยกมืออาสาทำเรื่องใหม่เสมอ</div>
+            </div>
+        </div>
+
+        <!-- 25. Curiosity & Discipline -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/library,books?lock=25');"></div>
+            <div class="card-number">25</div>
+            <div class="card-content">
+                <span class="tag tag-skill">Mindset</span>
+                <div class="card-icon"><i class="fa-solid fa-brain"></i></div>
+                <div class="card-title">รักษาความอยากรู้อยากเห็น</div>
+                <div class="card-text">ต้องมีวินัย (Discipline) ในการเรียนรู้ทักษะใหม่ ยอมรับว่าเรียนรู้ช้ากว่าเด็กแต่ต้องไม่หยุด</div>
+            </div>
+        </div>
+
+        <!-- 26. AI Threat -->
+        <div class="card urgent" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/robot,ai?lock=26');"></div>
+            <div class="card-number">26</div>
+            <div class="card-content">
+                <span class="tag tag-skill">AI & Tech</span>
+                <div class="card-icon"><i class="fa-solid fa-robot"></i></div>
+                <div class="card-title">AI ฆ่า Single Knowledge</div>
+                <div class="card-text">อาชีพที่รู้ด้านเดียว (ทนาย, วิศวกร, หมอบางสาขา) เสี่ยงถูก AI แทนที่ได้ง่ายที่สุด</div>
+            </div>
+        </div>
+
+        <!-- 27. Creativity vs AI -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/art,painting?lock=27');"></div>
+            <div class="card-number">27</div>
+            <div class="card-content">
+                <span class="tag tag-skill">AI & Tech</span>
+                <div class="card-icon"><i class="fa-solid fa-palette"></i></div>
+                <div class="card-title">AI ยังแพ้ Creativity</div>
+                <div class="card-text">ความคิดสร้างสรรค์เกิดจากการผสมผสานความรู้ 2 ด้านที่ดูไม่เข้ากัน ซึ่ง AI ยังทำได้ไม่เนียน</div>
+            </div>
+        </div>
+
+        <!-- 28. Two-Skill Imperative -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/puzzle,jigsaw?lock=28');"></div>
+            <div class="card-number">28</div>
+            <div class="card-content">
+                <span class="tag tag-skill">Strategy</span>
+                <div class="card-icon"><i class="fa-solid fa-puzzle-piece"></i></div>
+                <div class="card-title">กฎ Two-Skill Imperative</div>
+                <div class="card-text">ต้องมีทักษะอย่างน้อย 2 อย่าง ไม่ต้องเก่งที่สุด แต่เอามาผสมกันให้เกิดความสามารถใหม่</div>
+            </div>
+        </div>
+
+        <!-- 29. Exact + Art Skill -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/music,science?lock=29');"></div>
+            <div class="card-number">29</div>
+            <div class="card-content">
+                <span class="tag tag-skill">Strategy</span>
+                <div class="card-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <div class="card-title">ทักษะ "เป๊ะ" + ทักษะ "กะ"</div>
+                <div class="card-text">รวมวิชาชีพ (เป๊ะ) เข้ากับศิลปะ/ความสนใจ (กะ) เช่น วิศวกร + ดนตรี = นวัตกรรมสร้างสรรค์</div>
+            </div>
+        </div>
+
+        <!-- 30. Start Creating -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/camera,video?lock=30');"></div>
+            <div class="card-number">30</div>
+            <div class="card-content">
+                <span class="tag tag-skill">Action</span>
+                <div class="card-icon"><i class="fa-brands fa-tiktok"></i></div>
+                <div class="card-title">เริ่มทำ Content เดี๋ยวนี้</div>
+                <div class="card-text">ฝึก Storytelling ผ่าน TikTok/YouTube ช่วยฝึกจับประเด็นและขายของ เพิ่มมูลค่าให้งานประจำได้</div>
+            </div>
+        </div>
+
+        <!-- 31. New Gen Wealth Formula -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/science,lab?lock=31');"></div>
+            <div class="card-number">31</div>
+            <div class="card-content">
+                <span class="tag tag-opportunity">New Gen</span>
+                <div class="card-icon"><i class="fa-solid fa-flask"></i></div>
+                <div class="card-title">สูตรโกงความรวยเด็กรุ่นใหม่</div>
+                <div class="card-text">1. Product Diff สุดขั้ว 2. ใช้กองทัพ Micro-Influencer 3. ใช้ Data/Tech เต็มรูปแบบ</div>
+            </div>
+        </div>
+
+        <!-- 32. CEO Branding -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/office,executive?lock=32');"></div>
+            <div class="card-number">32</div>
+            <div class="card-content">
+                <span class="tag tag-marketing">Branding</span>
+                <div class="card-icon"><i class="fa-solid fa-user-tag"></i></div>
+                <div class="card-title">CEO ต้องลงมาเล่นเอง</div>
+                <div class="card-text">เจ้าของต้องทำคอนเทนต์ ตอบลูกค้าเอง เพื่อสร้างความผูกพัน (Engagement) แบบ Personalize</div>
+            </div>
+        </div>
+
+        <!-- 33. Exceed Expectation -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/speedometer,car?lock=33');"></div>
+            <div class="card-number">33</div>
+            <div class="card-content">
+                <span class="tag tag-marketing">Service</span>
+                <div class="card-icon"><i class="fa-solid fa-gauge-high"></i></div>
+                <div class="card-title">ทำ "มากกว่า" ความคาดหวัง</div>
+                <div class="card-text">ถ้าทำแค่ "เท่ากับ" ลูกค้าเฉยๆ แต่ถ้าทำ "ต่ำกว่า" ลูกค้าเกลียด ต้องทำให้ "เหนือกว่า" เท่านั้น</div>
+            </div>
+        </div>
+
+        <!-- 34. Surprise Factor -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/gift,box?lock=34');"></div>
+            <div class="card-number">34</div>
+            <div class="card-content">
+                <span class="tag tag-marketing">Service</span>
+                <div class="card-icon"><i class="fa-solid fa-gift"></i></div>
+                <div class="card-title">ศิลปะแห่งการ Surprise</div>
+                <div class="card-text">ส่งของเร็วกว่ากำหนด, เจ้าของมาตอบเอง, หรือดูแลพิเศษเมื่อผิดพลาด ให้เขารู้สึกว่าเรา "คิดเยอะ" เพื่อเขา</div>
+            </div>
+        </div>
+
+        <!-- 35. Likeability -->
+        <div class="card" onclick="toggleFocus(this)">
+            <div class="card-bg" style="background-image: url('https://loremflickr.com/600/400/smile,happy?lock=35');"></div>
+            <div class="card-number">35</div>
+            <div class="card-content">
+                <span class="tag tag-mindset">Life Skill</span>
+                <div class="card-icon"><i class="fa-solid fa-face-smile-wink"></i></div>
+                <div class="card-title">ทักษะสำคัญที่สุด: ความน่ารัก</div>
+                <div class="card-text">Likeability คือใบเบิกทาง ความเก่งพาไปได้ไกล แต่ความน่ารักจะดึงดูดกัลยาณมิตรและโอกาสเข้ามาช่วยในยามยาก</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleFocus(card) {
+            const container = document.getElementById('gridContainer');
+            const wasFocused = card.classList.contains('focused');
+
+            // 1. Reset all cards first
+            const allCards = document.querySelectorAll('.card');
+            allCards.forEach(c => c.classList.remove('focused'));
+            container.classList.remove('has-focus');
+
+            // 2. If it wasn't focused before, focus it now
+            if (!wasFocused) {
+                card.classList.add('focused');
+                container.classList.add('has-focus');
+                
+                // Optional: Scroll slightly to center if mostly off-screen on mobile
+                // card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+    </script>
+
+</body>
+</html>
